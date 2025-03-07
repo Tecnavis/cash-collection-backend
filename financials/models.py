@@ -1,8 +1,6 @@
 import datetime
 from django.db import models
-from services.models import Service
 from users.models import CustomUser
-from partner.models import PartnerProfile
 import decimal
 
 import logging
@@ -34,12 +32,12 @@ class Transaction(models.Model):
     )
     
     created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='transactions_created', blank=True, null=True)
-    partner = models.ForeignKey(PartnerProfile, on_delete=models.CASCADE, related_name='transactions', blank=True, null=True)
+    # partner = models.ForeignKey(PartnerProfile, on_delete=models.CASCADE, related_name='transactions', blank=True, null=True)
     total_service_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     remaining_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)  
     transaction_id = models.CharField(max_length=20, unique=True, blank=True, null=True)
     billing_address = models.TextField(blank=True, null=True)
-    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    # service = models.ForeignKey(Service, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default="unpaid")
     transaction_type = models.CharField(max_length=20, choices=TRANSACTION_TYPE_CHOICES)

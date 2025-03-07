@@ -34,6 +34,14 @@ class Command(BaseCommand):
                 "role": UserRoles.STAFF,
                 "is_staff": False,
                 "is_superuser": False
+            },
+             {
+                "email": "agent@gmail.com",
+                "username": "agent",
+                "password": "agent@1234",
+                "role": UserRoles.AGENT,
+                "is_staff": False,
+                "is_superuser": False
             }
         ]
 
@@ -70,6 +78,11 @@ class IsSecondaryAdmin(BasePermission):
 class IsStaff(BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.role == UserRoles.STAFF
+
+class IsAgent(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and str(request.user.role).upper() == str(UserRoles.AGENT).upper()
+        
     
 
     

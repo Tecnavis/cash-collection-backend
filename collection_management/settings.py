@@ -23,11 +23,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
-    "services",
     "main",
     "users",
     'financials',
-    'partner',
+    
     
 ]
 

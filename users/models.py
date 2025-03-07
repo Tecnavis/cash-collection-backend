@@ -8,14 +8,14 @@ class UserRoles:
     ADMIN = "admin"
     STAFF = "staff"
     CUSTOMER = "customer" 
-    VENDOR = "vendor" 
+    AGENT = "agent" 
 
     CHOICES = [
         (SUPER_ADMIN, "Super Admin"),
         (ADMIN, "Admin"),
         (STAFF, "Staff"),
         (CUSTOMER, "Customer"),
-        (VENDOR, "Vendor"),
+        (AGENT, "Agent"),
     ]    
 
 
@@ -79,3 +79,17 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
     
+    # created_by = models.ForeignKey(
+    #     CustomUser, 
+    #     on_delete=models.SET_NULL, 
+    #     null=True, 
+    #     related_name='created_partners'
+    # )
+    # updated_by = models.ForeignKey(
+    #     CustomUser, 
+    #     on_delete=models.SET_NULL, 
+    #     null=True, 
+    #     related_name='updated_partners'
+    # )
+    # created_at = models.DateTimeField(auto_now_add=True)
+    # updated_at = models.DateTimeField(auto_now=True)
