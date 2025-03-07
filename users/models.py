@@ -53,7 +53,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(_("Last Name"), max_length=255)
     role = models.CharField(max_length=20, choices=UserRoles.CHOICES, default=UserRoles.STAFF)
     contact_number = models.CharField(max_length=15, blank=True, null=True) 
-    employee_id = models.CharField(max_length=20, unique=True, blank=True, null=True)
 
     is_active = models.BooleanField(_("Is this user active?"), default=True)
     is_staff = models.BooleanField(_("Is this user staff?"), default=False)
@@ -79,17 +78,3 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
     
-    # created_by = models.ForeignKey(
-    #     CustomUser, 
-    #     on_delete=models.SET_NULL, 
-    #     null=True, 
-    #     related_name='created_partners'
-    # )
-    # updated_by = models.ForeignKey(
-    #     CustomUser, 
-    #     on_delete=models.SET_NULL, 
-    #     null=True, 
-    #     related_name='updated_partners'
-    # )
-    # created_at = models.DateTimeField(auto_now_add=True)
-    # updated_at = models.DateTimeField(auto_now=True)
