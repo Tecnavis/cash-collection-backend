@@ -1,6 +1,7 @@
 from django.db import models
 from customer.models import Customer
 from users.models import CustomUser
+from financials.models import Transaction
 
 
 class CollectionFrequencyChoices:
@@ -34,3 +35,21 @@ class CashCollectionScheme(models.Model):
 
     def __str__(self):
         return self.scheme_name
+
+
+class CashFlow(models.Model):
+    balance_type = models.CharField(max_length=50, choices=[("bank", "Bank"), ("hand_cash", "Hand Cash")])
+    total_balance = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.balance_type} - {self.total_balance}"
+
+class Refund(models.Model):
+    transaction = models.OneToOneField(Transaction, on_delete=models.CASCADE, related_name="refund")
+    amount_refunded = models.DecimalField(max_digits=12, decimal_places=2)
+    approved_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="approved_refunds")
+    refund_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Refund: {self.transaction.customer.user.first_name} - {self.amount_refunded}"
