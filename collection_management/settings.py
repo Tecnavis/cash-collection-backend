@@ -26,6 +26,9 @@ INSTALLED_APPS = [
     "main",
     "users",
     'financials',
+    'collections',
+    'customers',
+    'collectionplans',
     
     
 ]
