@@ -1,7 +1,7 @@
 from django.db import models
 from users.models import CustomUser
 from customer.models import Customer
-from collectionplans.models import Refund, CashCollectionScheme
+# from collectionplans.models import Refund, CashCollectionScheme
 
 
 class PaymentModes:
@@ -32,7 +32,7 @@ class TransactionStatus:
 
 class Transaction(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True,blank=True)
-    scheme = models.ForeignKey(CashCollectionScheme, on_delete=models.CASCADE, related_name="transactions")
+    scheme = models.ForeignKey('collectionplans.CashCollectionScheme', on_delete=models.CASCADE,null=True,blank=True, related_name="transactions")
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
     payment_mode = models.CharField(max_length=20, choices=PaymentModes.CHOICES)
     status = models.CharField(max_length=20, choices=TransactionStatus.CHOICES, default=TransactionStatus.PENDING)
