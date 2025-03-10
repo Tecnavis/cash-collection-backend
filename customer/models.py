@@ -5,7 +5,8 @@ class Customer(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name="customer_profile")
     alternative_contact = models.CharField(max_length=15, unique=True)
     address = models.TextField(blank=True, null=True)
-
+    other_info = models.TextField(blank=True, null=True)
+    
     created_by = models.ForeignKey(
         CustomUser, 
         on_delete=models.SET_NULL, 
