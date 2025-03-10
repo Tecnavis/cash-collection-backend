@@ -40,6 +40,7 @@ class CashCollectionScheme(models.Model):
 class CashFlow(models.Model):
     balance_type = models.CharField(max_length=50, choices=[("bank", "Bank"), ("hand_cash", "Hand Cash")])
     total_balance = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
+    date = models.DateField(auto_now=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -51,3 +52,16 @@ class Refund(models.Model):
     approved_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="approved_refunds")
     refund_date = models.DateTimeField(auto_now_add=True)
 
+class CashTransfer(models.Model):
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    source = models.CharField(max_length=10, choices=[('bank', 'Bank'), ('hand', 'Hand Cash')])
+    destination = models.CharField(max_length=10, choices=[('bank', 'Bank'), ('hand', 'Hand Cash')])
+    transfer_date = models.DateTimeField()
+    performed_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="cash_transfers")
+    notes = models.TextField(blank=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"{self.source} to {self.destination} - {self.amount} - {self.transfer_date}"
