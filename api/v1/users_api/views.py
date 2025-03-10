@@ -6,7 +6,7 @@ from users.models import CustomUser, UserRoles
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import permission_classes
-from .serializers import LoginSerializer, UserListSerializer,CustomUserSerializer
+from .serializers import LoginSerializer, UserListSerializer,CustomUserSerializer,UserSerializer
 from rest_framework import serializers
 from django.utils.translation import gettext_lazy as _
 from django.contrib.admin.views.decorators import staff_member_required as admin_required
@@ -207,3 +207,34 @@ def delete_admin_user(request, id):
     staff_user = CustomUser.objects.get(pk=id)
     staff_user.delete()
     return Response({"message": "User deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+    user = request.user
+    data = request.data
+    old_password = data.get("old_password")
+    new_password = data.get("new_password")
+    
+    if not user.check_password(old_password):
+        return Response({"error": "Old password is incorrect"}, status=status.HTTP_400_BAD_REQUEST)
+
+    user.set_password(new_password)
+    user.save()
+    return Response({"message": "Password changed successfully"}, status=status.HTTP_200_OK)
+
+@api_view(["GET", "PUT"])
+@permission_classes([IsAuthenticated])
+def user_profile(request):
+    user = request.user
+
+    if request.method == "GET":
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    elif request.method == "PUT":
+        serializer = UserSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

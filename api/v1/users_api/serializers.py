@@ -13,7 +13,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['email', 'username', 'contact_number', 'employee_id', 'is_staff','is_active']
+        fields = ['email', 'username', 'contact_number', 'is_staff','is_active']
         extra_kwargs = {'is_staff': {'read_only': True},
                         
                         'is_active': {'required': False}
@@ -58,7 +58,12 @@ class LoginSerializer(serializers.Serializer):
 class UserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id','username','email','role','is_active','is_staff','date_joined','contact_number','employee_id']
+        fields = ['id','username','email','role','is_active','is_staff','date_joined','contact_number']
         read_only_fields = ['id','date_joined']
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id','username','email','role','is_active','is_staff','date_joined','contact_number']
+        read_only_fields = ['id','date_joined']
    
