@@ -79,8 +79,11 @@ class Scheme(models.Model):
     """Defines the scheme details."""
     name = models.CharField(max_length=255, unique=True)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    collection_frequency = models.CharField(max_length=10, choices=CollectionFrequencyChoices.CHOICES)
+    collection_frequency = models.CharField(max_length=10, choices=CollectionFrequencyChoices.CHOICES,blank=True, null=True)
     installment_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+
+    start_date = models.DateField()
+    end_date = models.DateField()
 
     created_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="created_schemes")
     updated_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="updated_schemes")
