@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from customer.models import Customer
 from .serializers import CustomerSerializer
 
+
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def customer_detail(request, id):
