@@ -64,3 +64,10 @@ CollectionAgentDashboard	     Shows assigned collections and pending payments fo
 Notification	                 Manages system notifications for various events such as payment due, transaction status
 
 AuditLog	                     Logs system changes for security, tracking actions like data modifications and reconciliations
+
+
+>>git rm --cached -r */migrations/*
+>> git add .
+>> git commit -m "Removed all migration files except __init__.py"
+>>git push origin production
+
