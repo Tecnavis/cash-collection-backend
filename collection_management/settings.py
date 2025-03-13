@@ -10,8 +10,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = True
+ALLOWED_HOSTS = [
+    '13.126.77.40',
+    'api.neo2.tecnavis.com',
+    'neo2.tecnavis.com',
+    'localhost',
+    '127.0.0.1'
+]
 
-ALLOWED_HOSTS = ['13.126.77.40','api.neo2.tecnavis.com','localhost','127.0.0.1','neo2.tecnavis.com',]
+
+# ALLOWED_HOSTS = ['13.126.77.40','api.neo2.tecnavis.com','localhost','127.0.0.1','neo2.tecnavis.com',]
 
 INSTALLED_APPS = [
     'corsheaders', 
@@ -64,26 +72,24 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'collection_management.wsgi.application'
 
-DATABASES = {
-    'default': {
-
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
-    }
-}
-
-
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
+
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('DB_NAME'),
+#         'USER': os.getenv('DB_USER'),
+#         'PASSWORD': os.getenv('DB_PASSWORD'),
+#         'HOST': os.getenv('DB_HOST'),
+#         'PORT': os.getenv('DB_PORT'),
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 CORS_ALLOW_ALL_ORIGINS = True
 
