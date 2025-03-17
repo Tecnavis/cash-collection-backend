@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from .serializers import CashCollectionSerializer, SchemeSerializer,CashCollectionSerializer
+from .serializers import CashCollectionSerializer, SchemeSerializer,CashCollectionSerializer,CustomerSchemeSerializer,CashCollectionEntrySerializer
 from rest_framework.response import Response
 from rest_framework import status
 from collectionplans.models import CashCollection, Scheme
@@ -75,3 +75,16 @@ def enroll_customer_in_scheme(request):
         },
         status=status.HTTP_201_CREATED
     )
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def cash_collection_create(request):
+    data = request.data
+    serializer = CashCollectionEntrySerializer(data=data)
+
+    if serializer.is_valid():
+        serializer.save(created_by=request.user, updated_by=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

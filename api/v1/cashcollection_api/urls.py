@@ -17,4 +17,6 @@ urlpatterns = [
     # path("schemes/<int:id>/update/", views.scheme_update, name="scheme_update"),
     path("schemes/create/", views.scheme_create, name="scheme_create"),
 
+    path("cashcollection/create/", views.cash_collection_create, name="cash-collection-entry"),
+
 ] 
