@@ -56,7 +56,8 @@ class CashCollection(models.Model):
     def __str__(self):
         return f"{self.scheme.name} Collection ({self.start_date} - {self.end_date})"
     
-    
+
+
 class CustomerScheme(models.Model):
     """Tracks which customer has joined which scheme."""
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="enrolled_schemes")
@@ -70,6 +71,28 @@ class CustomerScheme(models.Model):
 
     def __str__(self):
         return f"{self.customer.user.username} - {self.scheme.name}"
+
+    
+class CashCollectionEntry(models.Model):
+    """Tracks individual collection transactions for a scheme"""
+    cash_collection = models.ForeignKey(CashCollection, on_delete=models.CASCADE, related_name="entries")
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="collection_entries")
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_date = models.DateField()
+    payment_method = models.CharField(
+        max_length=20, 
+        choices=[("cash", "Cash"), ("bank_transfer", "Bank Transfer"), ("upi", "UPI")], 
+        default="cash"
+    )
+    created_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="created_entries")
+    updated_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="updated_entries")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.customer.user.username} - {self.amount} on {self.payment_date}"
+
 
 
 class CashFlow(models.Model):
