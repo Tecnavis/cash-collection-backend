@@ -120,74 +120,77 @@ def agent_detail(request, id):
 # =========================================================================================================================================
 
  
+# @api_view(["POST"])
+# @permission_classes([IsAuthenticated])  
+# def create_agent(request):   
+#     print(f"Request Data: {request.data}")
+#     print(f"Authenticated User: {request.user}")
+
+#     serializer = AgentProfileSerializer(data=request.data)
+
+#     if serializer.is_valid():
+#         validated_data = serializer.validated_data
+#         first_name = validated_data.get("first_name")
+#         last_name = validated_data.get("last_name")
+#         email = validated_data.get("email")
+#         contact_number = validated_data.get("contact_number")
+#         address = validated_data.get("address", "")
+#         other_info = validated_data.get("other_info", "")
+#         alternative_contact = validated_data.get("alternative_contact", "")  
+#         secondary_contact = validated_data.get("secondary_contact", "")
+
+#         user = request.user
+
+#         existing_agent = Agent.objects.filter(user=user).first()
+#         print(f"Existing Agent: {existing_agent}") 
+
+#         if existing_agent:
+#             return Response({
+#                 "status": 400,
+#                 "stable": "true",
+#                 "error": {},
+#                 "title": "Already exists",
+#                 "message": "Agent already exists"
+#             }, status=400)
+
+#         # Create a new Agent
+#         agent = CustomUser.objects.create(
+#             user=user,
+#             first_name=first_name,
+#             last_name=last_name,
+#             email=email,
+#             contact_number=contact_number,
+#             address=address,
+#             other_info=other_info,
+#             alternate_contact=alternative_contact,  # Ensure this matches the model field
+#             creator=user,
+#             updator=user
+#         )
+
+#         return Response({
+#             "status": 200,
+#             "title": "Successfully Created",
+#             "data": serializer.data,
+#             "message": "Agent created successfully.",
+#             "redirect": "true",
+#         }, status=200)
+
+#     # Validation error response
+#     return Response({
+#         "stable": "true",
+#         "status": 400,
+#         "error": serializer.errors,
+#         "title": "Form validation error",
+#         "message": "Validation Error",
+#     }, status=400)
+
+
+from rest_framework.permissions import AllowAny
 @api_view(["POST"])
-@permission_classes([IsAuthenticated])  
-def create_agent(request):   
+@permission_classes([AllowAny])
+def create_agent(request):
     print(f"Request Data: {request.data}")
     print(f"Authenticated User: {request.user}")
-
-    serializer = AgentProfileSerializer(data=request.data)
-
-    if serializer.is_valid():
-        validated_data = serializer.validated_data
-        first_name = validated_data.get("first_name")
-        last_name = validated_data.get("last_name")
-        email = validated_data.get("email")
-        contact_number = validated_data.get("contact_number")
-        address = validated_data.get("address", "")
-        other_info = validated_data.get("other_info", "")
-        alternative_contact = validated_data.get("alternative_contact", "")  
-        secondary_contact = validated_data.get("secondary_contact", "")
-
-        user = request.user
-
-        existing_agent = Agent.objects.filter(user=user).first()
-        print(f"Existing Agent: {existing_agent}") 
-
-        if existing_agent:
-            return Response({
-                "status": 400,
-                "stable": "true",
-                "error": {},
-                "title": "Already exists",
-                "message": "Agent already exists"
-            }, status=400)
-
-        # Create a new Agent
-        agent = CustomUser.objects.create(
-            user=user,
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-            contact_number=contact_number,
-            address=address,
-            other_info=other_info,
-            alternate_contact=alternative_contact,  # Ensure this matches the model field
-            creator=user,
-            updator=user
-        )
-
-        return Response({
-            "status": 200,
-            "title": "Successfully Created",
-            "data": serializer.data,
-            "message": "Agent created successfully.",
-            "redirect": "true",
-        }, status=200)
-
-    # Validation error response
-    return Response({
-        "stable": "true",
-        "status": 400,
-        "error": serializer.errors,
-        "title": "Form validation error",
-        "message": "Validation Error",
-    }, status=400)
-
-
-@api_view(["POST"])
-@permission_classes([IsAuthenticated])
-def create_agent(request):
     data = request.data
     email = data.get("email")
     password = data.get("password")
@@ -211,15 +214,14 @@ def create_agent(request):
             "message": "User with this email already exists."
         }, status=status.HTTP_400_BAD_REQUEST)
 
-    # Create the agent user
     user = CustomUser.objects.create_user(
         email=email,
-        username=email.split('@')[0],  # Use part of email as username
+        username=email.split('@')[0],  
         password=password,
         first_name=first_name,
         last_name=last_name,
         contact_number=contact_number,
-        role=UserRoles.AGENT,  # Assign agent role
+        role=UserRoles.AGENT,  
         is_active=True,
         is_staff=False
     )
