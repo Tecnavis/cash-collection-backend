@@ -64,6 +64,19 @@ class CustomerSerializer(ModelSerializer):
             validated_data["updated_by"] = request.user
         return super().update(instance, validated_data)
 
-        
+
+class UserSerializer(ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['first_name','last_name','email']
+
+
+class CustomerListSerializer(ModelSerializer):
+    user = UserSerializer()  
+
+    class Meta:
+        model = Customer
+        exclude = ['created_by', 'updated_by', 'created_at', 'updated_at']
+        read_only_fields = ['user']
 
             

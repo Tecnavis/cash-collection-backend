@@ -4,7 +4,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from customer.models import Customer,Agent
-from .serializers import CustomerSerializer,AgentProfileSerializer
+from .serializers import CustomerSerializer,AgentProfileSerializer,CustomerListSerializer
 from django.core.paginator import Paginator
 from users.models import CustomUser, UserRoles
 from api.v1.users_api.serializers import UserSerializer
@@ -34,7 +34,7 @@ def customer_update(request, id):
 def customer_list(request):
     """Retrieve only active customers (users who are not deleted)."""
     customers = Customer.objects.filter(user__is_deleted=False)
-    serializer = CustomerSerializer(customers, many=True)
+    serializer = CustomerListSerializer(customers, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(["GET"])

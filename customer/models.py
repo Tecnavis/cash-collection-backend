@@ -1,6 +1,7 @@
 from django.db import models
 from users.models import CustomUser
 
+
 class Customer(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name="customer_profile")
     secondary_contact = models.CharField(max_length=15, unique=True)
