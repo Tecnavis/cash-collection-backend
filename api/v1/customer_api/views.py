@@ -230,6 +230,8 @@ def customer_create(request):
         "secondary_contact": secondary_contact
     }
 
+    print(user.role)
+
     customer_serializer = CustomerSerializer(data=customer_data)
     if customer_serializer.is_valid():
         customer_serializer.save()

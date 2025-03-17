@@ -18,11 +18,12 @@ class SchemeSerializer(ModelSerializer):
 
 class CashCollectionSerializer(serializers.ModelSerializer):
     scheme_name = serializers.ReadOnlyField(source="scheme.name") 
-    customer = serializers.ReadOnlyField(source="customer.user.username")  
+    customer = serializers.PrimaryKeyRelatedField(queryset=Customer.objects.all(), required=True)
+    customer_name = serializers.ReadOnlyField(source="customer.user.username")  
 
     class Meta:
         model = CashCollection
-        fields = "__all__"  
+        fields = "__all__"
 
 
 
