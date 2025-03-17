@@ -41,7 +41,8 @@ class CashCollection(models.Model):
     scheme = models.ForeignKey(Scheme, on_delete=models.CASCADE, related_name="collections")
     start_date = models.DateField()
     end_date = models.DateField()
-    customer = models.ForeignKey(Customer, related_name="cash_collections")
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="cash_collections")
+    
     created_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="created_collections")
     updated_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="updated_collections")
 
@@ -51,8 +52,6 @@ class CashCollection(models.Model):
     def __str__(self):
         return f"{self.scheme.name} Collection ({self.start_date} - {self.end_date})"
     
-
-
 class CustomerScheme(models.Model):
     """Tracks which customer has joined which scheme."""
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="enrolled_schemes")
