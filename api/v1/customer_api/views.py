@@ -183,7 +183,7 @@ def create_agent(request):
 
 
 @api_view(["POST"])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def customer_create(request):
     data = request.data
     email = data.get("email")
