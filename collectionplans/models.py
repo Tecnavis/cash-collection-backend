@@ -38,15 +38,10 @@ class Scheme(models.Model):
 
 
 class CashCollection(models.Model):
-    """Handles collections for a specific scheme and assigned customers.
-    Which scheme the customer is enrolling in.
-    Which customers are part of that scheme."""
-    
     scheme = models.ForeignKey(Scheme, on_delete=models.CASCADE, related_name="collections")
     start_date = models.DateField()
     end_date = models.DateField()
-    customers = models.ManyToManyField(Customer, related_name="cash_collections")
-
+    customer = models.ForeignKey(Customer, related_name="cash_collections")
     created_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="created_collections")
     updated_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="updated_collections")
 

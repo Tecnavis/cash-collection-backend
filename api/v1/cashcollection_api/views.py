@@ -28,53 +28,37 @@ def scheme_create(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def enroll_customer_in_scheme(request):
     """Enrolls a customer in a selected scheme (Creates CashCollection)."""
     
-    customer_id = request.data.get("customer")
-    scheme_id = request.data.get("scheme")
-    start_date = request.data.get("start_date")
-    end_date = request.data.get("end_date")
-
-    if not customer_id or not scheme_id:
+    serializer = CashCollectionSerializer(data=request.data)
+    
+    if not request.data.get("customer") or not request.data.get("scheme"):
         return Response({"error": "Customer and Scheme are required"}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        customer = Customer.objects.get(id=customer_id)
+        customer = Customer.objects.get(id=request.data["customer"])
     except Customer.DoesNotExist:
         return Response({"error": "Customer not found"}, status=status.HTTP_404_NOT_FOUND)
 
     try:
-        scheme = Scheme.objects.get(id=scheme_id)
+        scheme = Scheme.objects.get(id=request.data["scheme"])
     except Scheme.DoesNotExist:
         return Response({"error": "Scheme not found"}, status=status.HTTP_404_NOT_FOUND)
 
-   
     existing_entry = CashCollection.objects.filter(scheme=scheme, customers=customer).exists()
-    
     if existing_entry:
         return Response({"error": "Customer is already enrolled in this scheme"}, status=status.HTTP_400_BAD_REQUEST)
 
-    cash_collection = CashCollection.objects.create(
-        scheme=scheme,
-        start_date=start_date,
-        end_date=end_date,
-        created_by=request.user 
-    )
-    
-    cash_collection.customers.add(customer)
+    if serializer.is_valid():
+        cash_collection = serializer.save(created_by=request.user)
+        cash_collection.customers.add(customer)  
 
-    return Response(
-        {
-            "message": "Customer successfully enrolled in the scheme",
-            "scheme": scheme.name,
-            "customer": customer.id
-        },
-        status=status.HTTP_201_CREATED
-    )
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])

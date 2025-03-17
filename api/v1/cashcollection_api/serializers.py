@@ -18,15 +18,11 @@ class SchemeSerializer(ModelSerializer):
 
 class CashCollectionSerializer(serializers.ModelSerializer):
     scheme_name = serializers.ReadOnlyField(source="scheme.name") 
-    customer_list = serializers.SerializerMethodField()  
+    customer = serializers.ReadOnlyField(source="customer.user.username")  
 
     class Meta:
         model = CashCollection
-        fields = ['id', 'scheme', 'scheme_name', 'start_date', 'end_date', 'customer_list']
-
-    def get_customer_list(self, obj):
-        """Retrieve the list of customers enrolled in this scheme."""
-        return [customer.user.username for customer in obj.customers.all()]
+        fields = "__all__"  
 
 
 
