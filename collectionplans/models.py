@@ -38,7 +38,10 @@ class Scheme(models.Model):
 
 
 class CashCollection(models.Model):
-    """Handles collections for a specific scheme and assigned customers."""
+    """Handles collections for a specific scheme and assigned customers.
+    Which scheme the customer is enrolling in.
+    Which customers are part of that scheme."""
+    
     scheme = models.ForeignKey(Scheme, on_delete=models.CASCADE, related_name="collections")
     start_date = models.DateField()
     end_date = models.DateField()
@@ -52,6 +55,21 @@ class CashCollection(models.Model):
 
     def __str__(self):
         return f"{self.scheme.name} Collection ({self.start_date} - {self.end_date})"
+    
+    
+class CustomerScheme(models.Model):
+    """Tracks which customer has joined which scheme."""
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="enrolled_schemes")
+    scheme = models.ForeignKey(Scheme, on_delete=models.CASCADE, related_name="customer_schemes")
+    joined_date = models.DateField(auto_now_add=True)  
+    amount_paid = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  
+    status = models.CharField(max_length=20, choices=[("active", "Active"), ("completed", "Completed"), ("cancelled", "Cancelled")], default="active")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.customer.user.username} - {self.scheme.name}"
 
 
 class CashFlow(models.Model):

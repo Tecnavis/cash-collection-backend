@@ -1,11 +1,12 @@
 from rest_framework import viewsets
-from .serializers import CashCollectionSerializer, SchemeSerializer
+from .serializers import CashCollectionSerializer, SchemeSerializer,CashCollectionSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from collectionplans.models import CashCollection, Scheme
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import permission_classes
+from customer.models import Customer
 
 
 @api_view(['GET'])
@@ -25,3 +26,52 @@ def scheme_create(request):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def enroll_customer_in_scheme(request):
+    """Enrolls a customer in a selected scheme (Creates CashCollection)."""
+    
+    customer_id = request.data.get("customer")
+    scheme_id = request.data.get("scheme")
+    start_date = request.data.get("start_date")
+    end_date = request.data.get("end_date")
+
+    if not customer_id or not scheme_id:
+        return Response({"error": "Customer and Scheme are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        customer = Customer.objects.get(id=customer_id)
+    except Customer.DoesNotExist:
+        return Response({"error": "Customer not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        scheme = Scheme.objects.get(id=scheme_id)
+    except Scheme.DoesNotExist:
+        return Response({"error": "Scheme not found"}, status=status.HTTP_404_NOT_FOUND)
+
+   
+    existing_entry = CashCollection.objects.filter(scheme=scheme, customers=customer).exists()
+    
+    if existing_entry:
+        return Response({"error": "Customer is already enrolled in this scheme"}, status=status.HTTP_400_BAD_REQUEST)
+
+    cash_collection = CashCollection.objects.create(
+        scheme=scheme,
+        start_date=start_date,
+        end_date=end_date,
+        created_by=request.user 
+    )
+    
+    cash_collection.customers.add(customer)
+
+    return Response(
+        {
+            "message": "Customer successfully enrolled in the scheme",
+            "scheme": scheme.name,
+            "customer": customer.id
+        },
+        status=status.HTTP_201_CREATED
+    )

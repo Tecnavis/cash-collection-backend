@@ -45,7 +45,7 @@ class AgentProfileSerializer(ModelSerializer):
     
 class CustomerSerializer(ModelSerializer):
     class Meta:
-        model = Agent
+        model = Customer
         exclude = ['created_by', 'updated_by', 'created_at', 'updated_at']
         extra_kwargs = {
             'user': {'required': False},  

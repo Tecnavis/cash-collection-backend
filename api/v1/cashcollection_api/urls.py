@@ -8,7 +8,7 @@ urlpatterns = [
     # path("cashcollections/", views.cashcollection_list, name="cashcollection_list"),
     # path("cashcollections/<int:id>/", views.cashcollection_detail, name="cashcollection_detail"),
     # path("cashcollections/<int:id>/delete/", views.cashcollection_delete, name="cashcollection_delete"),
-    # path("cashcollections/create/", views.cashcollection_create, name="cashcollection_create"),
+    path("cashcollections/create/", views.enroll_customer_in_scheme, name="cashcollection_create"),
     # path("cashcollections/<int:id>/update/", views.cashcollection_update, name="cashcollection_update"),
 
     path("schemes/", views.scheme_list, name="scheme_list"),
