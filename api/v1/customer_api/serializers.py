@@ -22,28 +22,13 @@ class CustomerAssignmentSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
-class AgentProfileSerializer(ModelSerializer):
+class UserSerializer(ModelSerializer):
     class Meta:
-        model = Agent
-        exclude = ['created_by', 'updated_by', 'created_at', 'updated_at']
-        extra_kwargs = {
-            'user': {'required': False},  
-        }
-
-    def create(self, validated_data):
-        request = self.context.get('request')
-        if request and hasattr(request, "user"):
-            validated_data["created_by"] = request.user
-            validated_data["updated_by"] = request.user
-        return super().create(validated_data)
-
-    def update(self, instance, validated_data):
-        request = self.context.get('request')
-        if request and hasattr(request, "user"):
-            validated_data["updated_by"] = request.user
-        return super().update(instance, validated_data)
+        model = CustomUser
+        fields = ['first_name','last_name','email']
     
 class CustomerSerializer(ModelSerializer):
+    user = UserSerializer()  
     class Meta:
         model = Customer
         exclude = ['created_by', 'updated_by', 'created_at', 'updated_at']
@@ -65,10 +50,7 @@ class CustomerSerializer(ModelSerializer):
         return super().update(instance, validated_data)
 
 
-class UserSerializer(ModelSerializer):
-    class Meta:
-        model = CustomUser
-        fields = ['first_name','last_name','email']
+
 
 
 class CustomerListSerializer(ModelSerializer):
@@ -79,4 +61,25 @@ class CustomerListSerializer(ModelSerializer):
         exclude = ['created_by', 'updated_by', 'created_at', 'updated_at']
         read_only_fields = ['user']
 
-            
+class AgentProfileSerializer(ModelSerializer):
+    user = UserSerializer()  
+    class Meta:
+        model = Agent
+        exclude = ['created_by', 'updated_by', 'created_at', 'updated_at']
+        extra_kwargs = {
+            'user': {'required': False},  
+        }
+    def create(self, validated_data):
+        request = self.context.get('request')
+        if request and hasattr(request, "user"):
+            validated_data["created_by"] = request.user
+            validated_data["updated_by"] = request.user
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        request = self.context.get('request')
+        if request and hasattr(request, "user"):
+            validated_data["updated_by"] = request.user
+        return super().update(instance, validated_data)  
+
+

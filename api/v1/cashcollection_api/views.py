@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from .serializers import CashCollectionSerializer, SchemeSerializer,CashCollectionSerializer,CustomerSchemeSerializer,CashCollectionEntrySerializer
+from .serializers import CashCollectionSerializer, SchemeSerializer,CashCollectionSerializer,CashCollectionEntrySerializer
 from rest_framework.response import Response
 from rest_framework import status
 from collectionplans.models import CashCollection, Scheme
@@ -7,6 +7,7 @@ from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import permission_classes
 from customer.models import Customer
+from collectionplans.models import CashCollectionEntry
 
 
 @api_view(['GET'])
@@ -26,6 +27,21 @@ def scheme_create(request):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def scheme_update(request, id):
+    """Update an existing scheme."""
+    try:
+        scheme = Scheme.objects.get(id=id)
+    except Scheme.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = SchemeSerializer(scheme, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  
 
 
 @api_view(['POST'])
@@ -63,74 +79,116 @@ def enroll_customer_in_scheme(request):
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# @api_view(['POST'])
-# @permission_classes([AllowAny])
-# def enroll_customer_in_scheme(request):
-#     """Enrolls a customer in a selected scheme (Creates CashCollection)."""
-   
-#     serializer = CashCollectionSerializer(data=request.data)
-   
-#     if not request.data.get("customers") or not request.data.get("scheme"):
-#         return Response({"error": "Customer and Scheme are required"}, status=status.HTTP_400_BAD_REQUEST)
-#     try:
-#         customer = Customer.objects.get(id=request.data["customers"])
-#     except Customer.DoesNotExist:
-#         return Response({"error": "Customer not found"}, status=status.HTTP_404_NOT_FOUND)
-#     try:
-#         scheme = Scheme.objects.get(id=request.data["scheme"])
-#     except Scheme.DoesNotExist:
-#         return Response({"error": "Scheme not found"}, status=status.HTTP_404_NOT_FOUND)
-#     existing_entry = CashCollection.objects.filter(scheme=scheme, customers=customer).exists()
-#     if existing_entry:
-#         return Response({"error": "Customer is already enrolled in this scheme"}, status=status.HTTP_400_BAD_REQUEST)
-#     if serializer.is_valid():
-#         cash_collection = serializer.save(created_by=request.user)
-#         cash_collection.customers.add(customer)  
-#         return Response(serializer.data, status=status.HTTP_201_CREATED)
-#     else:
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# @api_view(['POST'])
-# @permission_classes([AllowAny])
-# def enroll_customer_in_scheme(request):
-#     """Enrolls a customer in a selected scheme (Creates CashCollection)."""
-    
-#     serializer = CashCollectionSerializer(data=request.data)
-    
-#     if not request.data.get("customer") or not request.data.get("scheme"):
-#         return Response({"error": "Customer and Scheme are required"}, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def cash_collection_list(request):
+    cash_collections = CashCollection.objects.all()
+    serializer = CashCollectionSerializer(cash_collections, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
-#     try:
-#         customer = Customer.objects.get(id=request.data["customer"])
-#     except Customer.DoesNotExist:
-#         return Response({"error": "Customer not found"}, status=status.HTTP_404_NOT_FOUND)
 
-#     try:
-#         scheme = Scheme.objects.get(id=request.data["scheme"])
-#     except Scheme.DoesNotExist:
-#         return Response({"error": "Scheme not found"}, status=status.HTTP_404_NOT_FOUND)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def cash_collection_detail(request, id):
+    try:
+        cash_collection = CashCollection.objects.get(id=id)
+    except CashCollection.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    serializer = CashCollectionSerializer(cash_collection)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
-#     existing_entry = CashCollection.objects.filter(scheme=scheme, customers=customer).exists()
-#     if existing_entry:
-#         return Response({"error": "Customer is already enrolled in this scheme"}, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def cashcollection_delete(request, id):
+    try:
+        cash_collection = CashCollection.objects.get(id=id)
+    except CashCollection.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    cash_collection.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
 
-#     if serializer.is_valid():
-#         cash_collection = serializer.save(created_by=request.user)
-#         cash_collection.customers.add(customer)  
 
-#         return Response(serializer.data, status=status.HTTP_201_CREATED)
-#     else:
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
 
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def cash_collection_create(request):
+def cash_collection_entry_create(request):
     data = request.data
     serializer = CashCollectionEntrySerializer(data=data)
-
     if serializer.is_valid():
         serializer.save(created_by=request.user, updated_by=request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# List view function
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def cash_collection_entry_list(request):
+    entries = CashCollectionEntry.objects.all()
+    serializer = CashCollectionEntrySerializer(entries, many=True)
+    return Response(serializer.data)
+
+# Detail view function
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def cash_collection_entry_detail(request, pk):
+    try:
+        entry = CashCollectionEntry.objects.get(pk=pk)
+    except CashCollectionEntry.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = CashCollectionEntrySerializer(entry)
+    return Response(serializer.data)
+
+# Update view function
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def cash_collection_entry_update(request, pk):
+    try:
+        entry = CashCollectionEntry.objects.get(pk=pk)
+    except CashCollectionEntry.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    serializer = CashCollectionEntrySerializer(entry, data=request.data)
+    if serializer.is_valid():
+        serializer.save(updated_by=request.user)
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# Delete view function
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def cash_collection_entry_delete(request, pk):
+    try:
+        entry = CashCollectionEntry.objects.get(pk=pk)
+    except CashCollectionEntry.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    entry.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+
+
+# ...........................................................................................................
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_customer_schemes(request):
+    """Get all customer-scheme enrollments (CashCollection records)."""
+    print(request.data)
+    
+    scheme_id = request.query_params.get('scheme', None)
+    queryset = CashCollection.objects.all()
+
+    if scheme_id:
+        queryset = queryset.filter(scheme_id=scheme_id)
+    serializer = CashCollectionSerializer(queryset, many=True)
+    
+    return Response(serializer.data)

@@ -67,6 +67,7 @@ def customer_restore(request, id):
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
 def update_agent(request, id):
+    print("request.data",request.data)
     agent = get_object_or_404(Agent, id=id)
     serializer = AgentProfileSerializer(agent, data=request.data, partial=True)
     if serializer.is_valid():

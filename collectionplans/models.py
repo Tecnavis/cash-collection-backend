@@ -19,6 +19,7 @@ class CollectionFrequencyChoices:
 
 class Scheme(models.Model):
     """Defines the scheme details."""
+    scheme_number = models.CharField(max_length=50, unique=True) 
     name = models.CharField(max_length=255, unique=True)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     collection_frequency = models.CharField(max_length=10, choices=CollectionFrequencyChoices.CHOICES,blank=True, null=True)
@@ -52,27 +53,11 @@ class CashCollection(models.Model):
     def __str__(self):
         return f"{self.scheme.name} Collection ({self.start_date} - {self.end_date})"
     
-class CustomerScheme(models.Model):
-    """Tracks which customer has joined which scheme."""
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="enrolled_schemes")
-    scheme = models.ForeignKey(Scheme, on_delete=models.CASCADE, related_name="customer_schemes")
-    joined_date = models.DateField(auto_now_add=True)  
-    amount_paid = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  
-    status = models.CharField(max_length=20, choices=[("active", "Active"), ("completed", "Completed"), ("cancelled", "Cancelled")], default="active")
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"{self.customer.user.username} - {self.scheme.name}"
-
-    
 class CashCollectionEntry(models.Model):
     """Tracks individual collection transactions for a scheme"""
-    cash_collection = models.ForeignKey(CashCollection, on_delete=models.CASCADE, related_name="entries")
+    # cash_collection = models.ForeignKey(CashCollection, on_delete=models.CASCADE, related_name="entries")
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="collection_entries")
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_date = models.DateField()
     payment_method = models.CharField(
         max_length=20, 
         choices=[("cash", "Cash"), ("bank_transfer", "Bank Transfer"), ("upi", "UPI")], 
@@ -85,7 +70,7 @@ class CashCollectionEntry(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.customer.user.username} - {self.amount} on {self.payment_date}"
+        return f"{self.customer.user.username} - {self.amount}"
 
 
 
