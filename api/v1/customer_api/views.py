@@ -4,7 +4,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from customer.models import Customer,Agent
-from .serializers import CustomerSerializer,AgentProfileSerializer,CustomerListSerializer
+from .serializers import CustomerSerializer,AgentProfileSerializer,CustomerListSerializer,AgentListSerializer
 from django.core.paginator import Paginator
 from users.models import CustomUser, UserRoles
 from api.v1.users_api.serializers import UserSerializer
@@ -99,7 +99,7 @@ def list_agents(request):
     page = request.GET.get("page", 1)
     agent_page = paginator.page(page)
 
-    serializer = AgentProfileSerializer(agent_page, many=True)
+    serializer = AgentListSerializer(agent_page, many=True)
     return Response({
         "count": paginator.count,
         "total_pages": paginator.num_pages,
