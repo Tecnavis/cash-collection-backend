@@ -71,3 +71,26 @@ AuditLog	                     Logs system changes for security, tracking actions
 >> git commit -m "Removed all migration files except __init__.py"
 >>git push origin production
 
+
+
+
+for remove all the migration files
+
+windows
+--------
+Get-ChildItem -Path . -Recurse -Filter "*.py" | Where-Object { $_.Name -ne "__init__.py" -and $_.FullName -match "migrations" } | Remove-Item -Force
+
+linux
+-----
+
+find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
+
+
+
+DATABASES NAMES 
+
+IN PRODUCTION
+cashcollectionpayprdn
+
+IN DEVELOPMENT
+cashcollectionpay
