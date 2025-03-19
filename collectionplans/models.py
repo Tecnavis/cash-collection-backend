@@ -55,7 +55,6 @@ class CashCollection(models.Model):
     
 class CashCollectionEntry(models.Model):
     """Tracks individual collection transactions for a scheme"""
-    # cash_collection = models.ForeignKey(CashCollection, on_delete=models.CASCADE, related_name="entries")
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="collection_entries")
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_method = models.CharField(
