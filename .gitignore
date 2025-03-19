@@ -26,8 +26,8 @@ staticfiles/
 media/
 
 # Django migrations (ignore all but keep __init__.py)
-# **/migrations/*
-# !**/migrations/__init__.py
+**/migrations/*
+!**/migrations/__init__.py
 
 # Ignore IDE/editor config files
 .vscode/
