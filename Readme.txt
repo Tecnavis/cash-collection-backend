@@ -84,3 +84,13 @@ linux
 -----
 
 find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
+
+
+
+DATABASES NAMES 
+
+IN PRODUCTION
+cashcollectionpayprdn
+
+IN DEVELOPMENT
+cashcollectionpay
