@@ -84,7 +84,7 @@ class CashFlow(models.Model):
 
 
 class Refund(models.Model):
-    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE, related_name="refunds")
+    transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE,null=True, blank=True,related_name="refunds")
     amount_refunded = models.DecimalField(max_digits=12, decimal_places=2)
     approved_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="approved_refunds")
     refund_date = models.DateTimeField(auto_now_add=True)
