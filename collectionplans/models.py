@@ -39,7 +39,7 @@ class Scheme(models.Model):
 
 
 class CashCollection(models.Model):
-    scheme = models.ForeignKey(Scheme, on_delete=models.CASCADE, related_name="collections")
+    scheme = models.ForeignKey(Scheme, on_delete=models.CASCADE, null=True, blank=True, related_name="collections")
     start_date = models.DateField()
     end_date = models.DateField()
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="cash_collections")
