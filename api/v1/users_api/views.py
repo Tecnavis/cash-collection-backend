@@ -85,7 +85,7 @@ def create_staff_user(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
-@permission_classes([IsSecondaryAdmin])  
+@permission_classes([IsSecondaryAdmin | IsMainAdmin])  
 def create_admin_user(request):
     serializer = CustomUserSerializer(data=request.data)
     
