@@ -10,27 +10,51 @@ from django.contrib.auth import authenticate
 CustomUser = get_user_model() 
 
 class CustomUserSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = CustomUser
-        fields = ['email', 'username', 'contact_number', 'is_staff','is_active']
-        extra_kwargs = {'is_staff': {'read_only': True},
-                        
-                        'is_active': {'required': False}
-                        }
+        fields = ['email', 'username', 'contact_number', 'is_staff', 'is_active', 'password']
+        extra_kwargs = {
+            'is_staff': {'read_only': True},
+            'is_active': {'required': False},
+            'password': {'write_only': True}  # Ensure password is write-only
+        }
 
     def create(self, validated_data):
-        password = validated_data.pop('password', None) 
+        password = validated_data.pop('password', None)  
         validated_data['is_staff'] = True  
+
+        # Use create_user to ensure password hashing
+        user = CustomUser.objects.create_user(**validated_data)  
+
+        if password:
+            user.set_password(password)  # Hash password
+            user.save()
+
+        return user
+
+
+# class CustomUserSerializer(serializers.ModelSerializer):
+
+#     class Meta:
+#         model = CustomUser
+#         fields = ['email', 'username', 'contact_number', 'is_staff','is_active']
+#         extra_kwargs = {'is_staff': {'read_only': True},
+                        
+#                         'is_active': {'required': False}
+#                         }
+
+#     def create(self, validated_data):
+#         password = validated_data.pop('password', None) 
+#         validated_data['is_staff'] = True  
        
         
-        user = CustomUser.objects.create_user(**validated_data) 
+#         user = CustomUser.objects.create_user(**validated_data) 
         
-        if password:
-            user.set_password(password) 
-            user.save()
+#         if password:
+#             user.set_password(password) 
+#             user.save()
         
-        return user
+#         return user
 
 
 class LoginSerializer(serializers.Serializer):
