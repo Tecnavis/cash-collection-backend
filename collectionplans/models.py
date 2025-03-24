@@ -40,9 +40,9 @@ class Scheme(models.Model):
 
 class CashCollection(models.Model):
     scheme = models.ForeignKey(Scheme, on_delete=models.CASCADE, null=True, blank=True, related_name="collections")
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="cash_collections")
     start_date = models.DateField()
     end_date = models.DateField()
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="cash_collections")
     
     created_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="created_collections")
     updated_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="updated_collections")
@@ -56,6 +56,7 @@ class CashCollection(models.Model):
 class CashCollectionEntry(models.Model):
     """Tracks individual collection transactions for a scheme"""
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="collection_entries")
+    scheme = models.ForeignKey(Scheme, on_delete=models.CASCADE, related_name="scheme_collections", null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_method = models.CharField(
         max_length=20, 
@@ -70,7 +71,6 @@ class CashCollectionEntry(models.Model):
 
     def __str__(self):
         return f"{self.customer.user.username} - {self.amount}"
-
 
 
 class CashFlow(models.Model):
