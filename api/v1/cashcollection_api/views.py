@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from .serializers import CashCollectionSerializer, SchemeSerializer,CashCollectionSerializer,CashCollectionEntrySerializer
+from .serializers import SchemeSerializer,CashCollectionSerializer,CashCollectionEntrySerializer,CustomerSchemePaymentSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from collectionplans.models import CashCollection, Scheme
@@ -109,12 +109,6 @@ def cashcollection_delete(request, id):
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-
-
-
-
-
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def cash_collection_entry_create(request):
@@ -133,6 +127,26 @@ def cash_collection_entry_list(request):
     serializer = CashCollectionEntrySerializer(entries, many=True)
     return Response(serializer.data)
 
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def customer_scheme_payment_list(request):
+    entries = CashCollectionEntry.objects.all()
+    serializer = CustomerSchemePaymentSerializer(entries, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+# @api_view(["GET"])
+# @permission_classes([IsAuthenticated])
+# def customer_scheme_payment_list(request):
+#     # Get unique (customer, scheme) pairs
+#     unique_entries = (
+#         CashCollectionEntry.objects.order_by("customer", "scheme")
+#         .distinct("customer", "scheme")
+#     )
+
+#     # Serialize the data
+#     serializer = CustomerSchemePaymentSerializer(unique_entries, many=True)
+
+#     return Response(serializer.data, status=status.HTTP_200_OK)
 # Detail view function
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -182,8 +196,6 @@ def cash_collection_entry_delete(request, pk):
 @permission_classes([IsAuthenticated])
 def get_customer_schemes(request):
     """Get all customer-scheme enrollments (CashCollection records)."""
-    print(request.data)
-    
     scheme_id = request.query_params.get('scheme', None)
     queryset = CashCollection.objects.all()
 

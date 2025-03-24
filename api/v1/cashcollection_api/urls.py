@@ -12,15 +12,13 @@ urlpatterns = [
 
 
     path("schemes/", views.scheme_list, name="scheme_list"),
-    # path("schemes/<int:id>/", views.scheme_detail, name="scheme_detail"),
-    # path("schemes/<int:id>/delete/", views.scheme_delete, name="scheme_delete"),
     path("schemes/<int:id>/", views.scheme_update, name="scheme_update"),
     path("schemes/create/", views.scheme_create, name="scheme_create"),
 
     path("cashcollection/bycustomer/create/", views.cash_collection_entry_create, name="cash-collection-entry"),
     path("cashcollection/bycustomer/", views.cash_collection_entry_list, name="cash-collection-entry-list"),
-
-
+    # payment history
+    path("customer-scheme-payments/", views.customer_scheme_payment_list, name="customer-scheme-payments"),
 
     path('customer-schemes/', views.get_customer_schemes, name='customer-scheme-list'),
 
