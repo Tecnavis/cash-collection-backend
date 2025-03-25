@@ -10,14 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 
-
-ALLOWED_HOSTS = [
-    '13.126.77.40',
-    'api.neo2.tecnavis.com',
-    'neo2.tecnavis.com',
-    'localhost',
-    '127.0.0.1'
-]
+ALLOWED_HOSTS = ["cash-collection-backend.onrender.com", "localhost", "127.0.0.1"]
 
 INSTALLED_APPS = [
     'corsheaders', 
