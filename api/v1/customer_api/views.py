@@ -200,6 +200,7 @@ def customer_create(request):
     other_info = data.get("other_info", "")
     secondary_contact = data.get("secondary_contact", "")
     profile_id = data.get("profileId") 
+    shop_name = data.get("shop_name")
 
     if not (email and password and first_name and last_name and contact_number):
         return Response({
@@ -230,6 +231,7 @@ def customer_create(request):
         "creator": request.user.id,
         "updator": request.user.id,
         "profile_id": profile_id,
+        "shop_name": shop_name,
         "alternative_contact": alternative_contact,
         "address": address,
         "other_info": other_info,

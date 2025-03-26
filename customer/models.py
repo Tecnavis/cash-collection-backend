@@ -4,6 +4,7 @@ from users.models import CustomUser
 
 class Customer(models.Model):
     profile_id = models.CharField(max_length=50, unique=True, blank=True, null=True)
+    shop_name = models.CharField(max_length=255, blank=True, null=True)
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name="customer_profile")
     secondary_contact = models.CharField(max_length=15, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
