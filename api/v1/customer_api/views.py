@@ -33,6 +33,8 @@ def customer_update(request, id):
 @permission_classes([IsAuthenticated])
 def customer_list(request):
     """Retrieve only active customers (users who are not deleted)."""
+
+    print("request.data",request.data)
     customers = Customer.objects.filter(user__is_deleted=False)
     serializer = CustomerListSerializer(customers, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
@@ -186,6 +188,7 @@ def create_agent(request):
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def customer_create(request):
+    print(request.data,"requested data")
     data = request.data
     email = data.get("email")
     password = data.get("password")
@@ -196,6 +199,7 @@ def customer_create(request):
     address = data.get("address", "")
     other_info = data.get("other_info", "")
     secondary_contact = data.get("secondary_contact", "")
+    profile_id = data.get("profileId") 
 
     if not (email and password and first_name and last_name and contact_number):
         return Response({
@@ -225,6 +229,7 @@ def customer_create(request):
         "user": user.id,
         "creator": request.user.id,
         "updator": request.user.id,
+        "profile_id": profile_id,
         "alternative_contact": alternative_contact,
         "address": address,
         "other_info": other_info,
