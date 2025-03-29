@@ -17,12 +17,22 @@ def customer_detail(request, id):
     serializer = CustomerSerializer(customer)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+@api_view(["PUT", "PATCH"])
+@permission_classes([IsAuthenticated])
+def customer_update(request, id):
+    """Update an existing customer and its associated CustomUser."""
+    customer = get_object_or_404(Customer, id=id)
+    serializer = CustomerSerializer(customer, data=request.data, partial=True, context={"request": request})
+    if serializer.is_valid():
+        serializer.save(updated_by=request.user) 
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
-def customer_update(request, id):
+def customer(request, id):
     """Update an existing customer."""
-    customer = get_object_or_404(Customer, id=id, is_deleted=False)
+    customer = get_object_or_404(Customer, id=id)
     serializer = CustomerSerializer(customer, data=request.data, partial=True, context={"request": request})
     if serializer.is_valid():
         serializer.save()
@@ -33,8 +43,6 @@ def customer_update(request, id):
 @permission_classes([IsAuthenticated])
 def customer_list(request):
     """Retrieve only active customers (users who are not deleted)."""
-
-    print("request.data",request.data)
     customers = Customer.objects.filter(user__is_deleted=False)
     serializer = CustomerListSerializer(customers, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
@@ -91,7 +99,6 @@ def agent_restore(request):
     agent.restore()
     return Response({"message": "Agent restored successfully"}, status=status.HTTP_200_OK)
    
-
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])

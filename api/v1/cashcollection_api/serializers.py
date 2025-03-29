@@ -14,6 +14,7 @@ class SchemeSerializer(ModelSerializer):
 
 class CashCollectionEntrySerializer(serializers.ModelSerializer):
     customer_name = serializers.SerializerMethodField()
+    shop_name = serializers.CharField(source="customer.shop_name", read_only=True)
     scheme_name = serializers.CharField(source="scheme.name", read_only=True)
 
     class Meta:
@@ -23,7 +24,7 @@ class CashCollectionEntrySerializer(serializers.ModelSerializer):
     def get_customer_name(self, obj):
         """Fetches customer full name from related CustomUser"""
         if obj.customer and obj.customer.user:
-            return f"{obj.customer.user.first_name} {obj.customer.user.last_name}"
+            return f"{obj.customer.user.first_name} {obj.customer.user.last_name} {obj.customer.shop_name}".strip()
         return None
 
 
@@ -39,30 +40,22 @@ class CashCollectionSerializer(serializers.ModelSerializer):
         fields = ['id', 'scheme', 'scheme_name', 'customer', 'customer_name', 
                   'scheme_total_amount','start_date', 'end_date', 'created_at', 'updated_at']
     
+    # def get_customer_name(self, obj):
+    #     if hasattr(obj.customer, 'user'):
+    #         user = obj.customer.user
+    #         return f"{user.first_name} {user.last_name}".strip() or user.username
+    #     return "Unknown Customer"
+    
     def get_customer_name(self, obj):
         if hasattr(obj.customer, 'user'):
             user = obj.customer.user
-            return f"{user.first_name} {user.last_name}".strip() or user.username
+            shop_name = obj.customer.shop_name if hasattr(obj.customer, 'shop_name') and obj.customer.shop_name else None
+            full_name = f"{user.first_name} {user.last_name}".strip() if user.first_name or user.last_name else user.username
+            return shop_name if shop_name else full_name
+
         return "Unknown Customer"
 
 
-# class CustomerSchemePaymentSerializer(serializers.ModelSerializer):
-#     customer_name = serializers.CharField(source="customer.user.first_name", read_only=True)
-#     customer_contact = serializers.CharField(source="customer.secondary_contact", read_only=True)
-#     scheme_name = serializers.CharField(source="scheme.name", read_only=True)
-#     scheme_total_amount = serializers.DecimalField(source="scheme.total_amount", max_digits=10, decimal_places=2, read_only=True)
-#     payment_history = serializers.SerializerMethodField()
-
-#     class Meta:
-#         model = CashCollectionEntry
-#         fields = ["customer_name", "customer_contact", "scheme_name", "scheme_total_amount", "payment_history"]
-
-#     def get_payment_history(self, obj):
-#         payments = CashCollectionEntry.objects.filter(customer=obj.customer, scheme=obj.scheme).order_by("created_at")
-#         return [
-#             {"amount": p.amount, "payment_method": p.payment_method, "date": p.created_at}
-#             for p in payments
-#         ]
 
 class CustomerSchemePaymentSerializer(serializers.ModelSerializer):
     customer_name = serializers.CharField(source="customer.user.first_name", read_only=True)
