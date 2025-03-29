@@ -32,31 +32,6 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
         return user
 
-
-# class CustomUserSerializer(serializers.ModelSerializer):
-
-#     class Meta:
-#         model = CustomUser
-#         fields = ['email', 'username', 'contact_number', 'is_staff','is_active']
-#         extra_kwargs = {'is_staff': {'read_only': True},
-                        
-#                         'is_active': {'required': False}
-#                         }
-
-#     def create(self, validated_data):
-#         password = validated_data.pop('password', None) 
-#         validated_data['is_staff'] = True  
-       
-        
-#         user = CustomUser.objects.create_user(**validated_data) 
-        
-#         if password:
-#             user.set_password(password) 
-#             user.save()
-        
-#         return user
-
-
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
